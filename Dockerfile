@@ -6,9 +6,9 @@ CMD ["/bin/sh"]
 ENTRYPOINT ["java", "-jar", "-jar", "app/test.jar"]
 
 #sudo docker images
-#sudo docker build -t franchise-aws-cf .
-#sudo docker rmi franchise-aws-cf
-#sudo docker run -p 8081:8080 --name franchise franchise-aws-cf
+#sudo docker build -t franchise-cf .
+#sudo docker rmi franchise-cf
+#sudo docker run -p 8081:8080 --name franchise franchise-cf
 #sudo docker ps -a
 #sudo docker start franchise
 #sudo docker stop franchise
