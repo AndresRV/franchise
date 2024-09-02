@@ -24,6 +24,11 @@ public class BranchUseCase implements IBranchServicePort {
     }
 
     @Override
+    public Flux<Branch> getBranchesByFranchiseId(Long franchiseId) {
+        return branchPersistencePort.getBranchesByFranchiseId(franchiseId);
+    }
+
+    @Override
     public Mono<Branch> getById(Long id) {
         return branchPersistencePort.getById(id);
     }

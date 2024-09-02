@@ -21,6 +21,7 @@ public class Router {
     private static final String PATH_BRANCH = "branchFunction";
     private static final String PATH_BRANCH_BY_ID = "branchFunction/{id}";
     private static final String FRANCHISE_BY_ID = "/franchise/{idFranchise}";
+    private static final String PRODUCT = "/product";
 
     private static final String PATH_FRANCHISE = "franchiseFunction";
     private static final String PATH_FRANCHISE_BY_ID = "franchiseFunction/{id}";
@@ -46,6 +47,7 @@ public class Router {
         return RouterFunctions.route()
                 .GET(PATH_BRANCH, req -> branchHandler.getAllBranches())
                 .POST(PATH_BRANCH + FRANCHISE_BY_ID, branchHandler::addBranchToFranchise)
+                .GET(PATH_BRANCH + FRANCHISE_BY_ID + PRODUCT, branchHandler::getProductsWithMaxStockByFranchise)
                 .PATCH(PATH_BRANCH_BY_ID + NAME, branchHandler::updateBranchName)
                 .build();
     }

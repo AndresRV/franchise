@@ -18,19 +18,24 @@ public class ProductAdapter implements IProductPersistencePort {
 
     @Override
     public Flux<Product> getAllProducts() {
-        return productRepository.findAll().map(productEntity -> productEntityMapper.toProduct(productEntity));
+        return productRepository.findAll().map(productEntityMapper::toProduct);
     }
 
     @Override
     public Mono<Product> getById(Long id) {
         return productRepository.findById(id)
                 .switchIfEmpty(Mono.error(new CustomException(HttpStatus.NOT_FOUND, ExceptionResponseEnum.PRODUCT_NOT_FOUND.getMessage())))
-                .map(productEntity -> productEntityMapper.toProduct(productEntity));
+                .map(productEntityMapper::toProduct);
     }
 
     @Override
     public Mono<Void> saveProduct(Product product) {
         return productRepository.save(productEntityMapper.toEntity(product)).then();
+    }
+
+    @Override
+    public Mono<Product> getProductWithMaxStockByBranchId(Long branchId) {
+        return productRepository.findProductWithMaxStockByBranchId(branchId).map(productEntityMapper::toProduct);
     }
 
     @Override
