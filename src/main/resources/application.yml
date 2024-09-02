@@ -1,0 +1,11 @@
+server:
+  port: 8081
+
+spring:
+  r2dbc:
+    url: ${DATABASE_URL:r2dbc:mysql://192.168.0.16:3306/franchise}
+    username: ${DB_USERNAME:root}
+    password: ${DB_PASSWORD:root}
+
+appDescription: "Pragma Powerup"
+appVersion: "1.0.0"
