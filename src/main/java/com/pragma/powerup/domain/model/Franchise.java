@@ -5,7 +5,6 @@ import java.util.List;
 public class Franchise {
     private Long id;
     private String name;
-    private Long branchId;
     private List<Branch> branchList;
 
     public Franchise(Long id, String name, List<Branch> branchList) {

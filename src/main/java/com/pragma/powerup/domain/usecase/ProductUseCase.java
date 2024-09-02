@@ -29,6 +29,11 @@ public class ProductUseCase implements IProductServicePort {
     }
 
     @Override
+    public Mono<Product> getProductWithMaxStockByBranchId(Long branchId) {
+        return productPersistencePort.getProductWithMaxStockByBranchId(branchId);
+    }
+
+    @Override
     public Mono<Product> getById(Long id) {
         return productPersistencePort.getById(id);
     }

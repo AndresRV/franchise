@@ -1,11 +1,9 @@
 package com.pragma.powerup.infrastructure.input;
 
 import com.pragma.powerup.application.dto.request.BranchRequest;
-import com.pragma.powerup.application.dto.request.ProductRequest;
 import com.pragma.powerup.application.dto.response.BranchResponse;
-import com.pragma.powerup.application.dto.response.ProductResponse;
+import com.pragma.powerup.application.dto.response.BranchesWithProductsMaxStockResponse;
 import com.pragma.powerup.application.handler.IBranchHandler;
-import com.pragma.powerup.application.handler.IProductHandler;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -31,6 +29,12 @@ public class BranchFunctionHandler {
         return request.bodyToMono(BranchRequest.class)
                 .flatMap(branchRequest -> branchHandler.addBranchToFranchise(franchiseId, branchRequest))
                 .then(ServerResponse.noContent().build());
+    }
+
+    public Mono<ServerResponse> getProductsWithMaxStockByFranchise(ServerRequest request) {
+        Long franchiseId = Long.valueOf(request.pathVariable(ID_FRANCHISE));
+        Flux<BranchesWithProductsMaxStockResponse> branchWithProductsMaxStocResponseFlux = branchHandler.getProductsWithMaxStockByFranchise(franchiseId);
+        return ServerResponse.ok().contentType(MediaType.APPLICATION_JSON).body(branchWithProductsMaxStocResponseFlux, BranchesWithProductsMaxStockResponse.class);
     }
 
     public Mono<ServerResponse> updateBranchName(ServerRequest request) {

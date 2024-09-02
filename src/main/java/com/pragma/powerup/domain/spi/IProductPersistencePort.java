@@ -8,6 +8,7 @@ public interface IProductPersistencePort {
     Flux<Product> getAllProducts();
     Mono<Product> getById(Long id);
     Mono<Void> saveProduct(Product product);
+    Mono<Product> getProductWithMaxStockByBranchId(Long branchId);
     Mono<Void> removeProductByIdAndBranchId(Long id, Long branchId);
 }
 
