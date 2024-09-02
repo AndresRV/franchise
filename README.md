@@ -1,61 +1,42 @@
 <br />
 <div align="center">
-<h3 align="center">PRAGMA POWER-UP</h3>
+<h3 align="center">FRANQUICIAS</h3>
   <p align="center">
-    In this challenge you are going to design the backend of a system that centralizes the services and orders of a restaurant chain that has different branches in the city.
+    API para administrar franquicias junto con sus sucursales y productos. 
   </p>
 </div>
 
-### Built With
-
-* ![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=java&logoColor=white)
-* ![Spring](https://img.shields.io/badge/Spring-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
-* ![Gradle](https://img.shields.io/badge/Gradle-02303A.svg?style=for-the-badge&logo=Gradle&logoColor=white)
-* ![MySQL](https://img.shields.io/badge/MySQL-00000F?style=for-the-badge&logo=mysql&logoColor=white)
-
-
 <!-- GETTING STARTED -->
-## Getting Started
+## Guía de inicio
 
-To get a local copy up and running follow these steps.
+Para poner en funcionamiento una copia local del proyecto, siga estos pasos.
 
-### Prerequisites
+### Prerequisitos
 
 * JDK 11 [https://jdk.java.net/java-se-ri/11](https://jdk.java.net/java-se-ri/11)
 * Gradle [https://gradle.org/install/](https://gradle.org/install/)
 * MySQL [https://dev.mysql.com/downloads/installer/](https://dev.mysql.com/downloads/installer/)
 
-### Recommended Tools
+### Herramientas recomendadas
 * IntelliJ Community [https://www.jetbrains.com/idea/download/](https://www.jetbrains.com/idea/download/)
 * Postman [https://www.postman.com/downloads/](https://www.postman.com/downloads/)
 
-### Installation
+### Instalación
 
-1. Clone the repo
-2. Change directory
-   ```sh
-   cd power-up-arquetipo
-   ```
-3. Create a new database in MySQL called powerup
-4. Update the database connection settings 
+1. Clone el repositorio
+2. Cree una base de datos in MySQL llamada franchise
+4. Actualice la configuración de la conexión a base de datos 
    ```yml
    # src/main/resources/application.yml   
    spring:
-      datasource:
-          url: jdbc:mysql://localhost/powerup
-          username: root
-          password: 1234
+      r2dbc:
+          url: ${DATABASE_URL:r2dbc:mysql://localhost/franchise}
+          username: ${DB_USERNAME:root}
+          password: ${DB_PASSWORD:root}
    ```
 
 <!-- USAGE -->
-## Usage
+## Uso
 
-1. Right-click the class PowerUpApplication and choose Run
-2. Open [http://localhost:8081/swagger-ui/index.html](http://localhost:8081/swagger-ui/index.html) in your web browser
-
-<!-- ROADMAP -->
-## Tests
-
-- Right-click the test folder and choose Run tests with coverage
-
-
+1. Oprima click derecho in la clase PowerUpApplication y seleccione Run
+2. Importe en Postman la colección FranchisePostman.postman_collection.json y pruebe los diferentes servicios
