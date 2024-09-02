@@ -2,10 +2,10 @@ AWSTemplateFormatVersion: "2010-09-09"
 Description: CloudFormation template to create an Amazon RDS MySQL cluster and a Fargate task.
 
 Parameters:
-  DB_USERNAME:
+  DBUserName:
     Type: String
     Description: "usuario db"
-  DB_PASSWORD:
+  DBPassword:
     Type: String
     Description: "clave db"
 
@@ -115,8 +115,8 @@ Resources:
     Properties:
       DBInstanceIdentifier: "mysql-instance"
       Engine: "mysql"
-      MasterUsername: !Ref DB_USERNAME
-      MasterUserPassword: !Ref DB_PASSWORD # Update with a secure password
+      MasterUsername: !Ref DBUserName
+      MasterUserPassword: !Ref DBPassword # Update with a secure password
       DBName: "franchise"
       DBSubnetGroupName: !Ref DBSubnetGroup
       VPCSecurityGroups:
@@ -173,11 +173,11 @@ Resources:
               awslogs-stream-prefix: 'ecs'
           Environment:
             - Name: DB_USERNAME
-              Value: !Ref DB_USERNAME
+              Value: !Ref DBUserName
             - Name: DB_PASSWORD
-              Value: !Ref DB_PASSWORD
+              Value: !Ref DBPassword
             - Name: DATABASE_URL
-              Value: !Sub 'r2dbc:mysql://${DB_USERNAME}:${DB_PASSWORD}@${RDSInstance.Endpoint.Address}:${RDSInstance.Endpoint.Port}/franchise'
+              Value: !Sub 'r2dbc:mysql://${DBUserName}:${DBPassword}@${RDSInstance.Endpoint.Address}:${RDSInstance.Endpoint.Port}/franchise'
 
   # IAM Role for ECS Task Execution
   ECSTaskExecutionRole:
@@ -295,5 +295,6 @@ Outputs:
     Value: !Sub '${AWS::AccountId}.dkr.ecr.${AWS::Region}.amazonaws.com/${ECRRepository}'
 
 #aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 009160068853.dkr.ecr.us-east-1.amazonaws.com
-#sudo docker tag franchise-aws-cf:latest 009160068853.dkr.ecr.us-east-1.amazonaws.com/franchise-repository:latest
+#sudo docker tag franchise-cf:latest 009160068853.dkr.ecr.us-east-1.amazonaws.com/franchise-repository:latest
 #sudo docker push 009160068853.dkr.ecr.us-east-1.amazonaws.com/franchise-repository:latest
+#masteruser:masterpassword
