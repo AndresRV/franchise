@@ -1,18 +1,15 @@
-package co.com.bancolombia.model.user;
-import lombok.Builder;
+package co.com.bancolombia.redis.template;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.lang.invoke.StringConcatException;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true)
-public class User {
+public class UserRedisModel {
     private Long id;
     private String email;
     private String firstName;

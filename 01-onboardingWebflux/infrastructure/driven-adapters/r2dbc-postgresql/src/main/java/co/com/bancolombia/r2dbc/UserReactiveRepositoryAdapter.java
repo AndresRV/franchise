@@ -12,7 +12,6 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-//@Component
 @Repository
 @AllArgsConstructor
 public class UserReactiveRepositoryAdapter implements UserRepository
@@ -22,6 +21,8 @@ public class UserReactiveRepositoryAdapter implements UserRepository
 
     @Override
     public Mono<User> saveUser(User user) {
+        //TODO: QUITAR SET ID
+        user.setId(null);
         return userReactiveRepository.save(userEntityMapper.toEntity(user))
                 .map(userEntity -> userEntityMapper.toUser(userEntity));
     }

@@ -1,6 +1,7 @@
 package co.com.bancolombia.usecase.user;
 
 import co.com.bancolombia.model.user.User;
+import co.com.bancolombia.model.user.gateways.UserCache;
 import co.com.bancolombia.model.user.gateways.UserRepository;
 import co.com.bancolombia.model.user.gateways.UserWebClient;
 import lombok.RequiredArgsConstructor;
@@ -11,6 +12,7 @@ import reactor.core.publisher.Mono;
 public class UserUseCase {
     private final UserRepository userRepository;
     private final UserWebClient userWebClient;
+    private final UserCache userCache;
 
     //TODO: ORGANIZAR EXCEPCIONES
 
@@ -22,8 +24,14 @@ public class UserUseCase {
     }
 
     public Mono<User> getUserById(Long id) {
-        return userRepository.getUserById(id)
-                .switchIfEmpty(Mono.error(new Exception("El usuario no existe")));
+        return userCache.findById(id.toString())
+                .switchIfEmpty(
+                        userRepository.getUserById(id)
+                                .switchIfEmpty(Mono.error(new Exception("El usuario no existe")))
+                                .flatMap(user -> userCache.save(user.getId().toString(), user, 60000L)
+                                        .thenReturn(user)
+                                )
+                );
     }
 
     public Flux<User> getAllUsers() {
