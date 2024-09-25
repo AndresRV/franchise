@@ -1,10 +1,17 @@
 package co.com.bancolombia.api;
 
+import co.com.bancolombia.api.response.MessageErrorResponse;
+import co.com.bancolombia.enums.TechnicalMessage;
+import co.com.bancolombia.exception.BusinessException;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.MediaType;
+import org.springframework.http.ProblemDetail;
 import org.springframework.stereotype.Component;
+import org.springframework.web.ErrorResponse;
 import org.springframework.web.reactive.function.server.ServerRequest;
 import org.springframework.web.reactive.function.server.ServerResponse;
 import reactor.core.publisher.Flux;
@@ -28,11 +35,19 @@ public class Handler {
 
     public Mono<ServerResponse> getUserById(ServerRequest serverRequest) {
         Long id = Long.valueOf(serverRequest.pathVariable(ID));
-        Mono<User> userMono = userUseCase.getUserById(id);
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userMono, User.class);
-    }
+        return userUseCase
+                .getUserById(id)
+                .flatMap(user ->
+                    Mono.defer(() -> ServerResponse.ok()
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(user))
+                )
+                .onErrorResume(BusinessException.class, error ->
+                    Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
+                );
+        }
 
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
         Flux<User> userFlux = userUseCase.getAllUsers();
@@ -47,5 +62,9 @@ public class Handler {
         return ServerResponse.ok()
                 .contentType(MediaType.APPLICATION_JSON)
                 .body(userMono, User.class);
+    }
+
+    private MessageErrorResponse buildMessageErrorResponse(TechnicalMessage technicalMessage) {
+        return new MessageErrorResponse(technicalMessage.getMessage());
     }
 }
