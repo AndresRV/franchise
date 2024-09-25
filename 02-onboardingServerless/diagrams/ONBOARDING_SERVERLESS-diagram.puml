@@ -1,0 +1,5 @@
+@startuml
+header ONBOARDING_SERVERLESS
+footer Página %page% of %lastpage%\nmade with ♥ by Nequi
+title Diagrama de Secuencia
+@enduml

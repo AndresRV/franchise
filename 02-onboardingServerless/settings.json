@@ -1,0 +1,26 @@
+{
+  "variables": {
+    "get": [
+      "NEQUI_EVENT_BRIDGE_BUS_NAME"
+    ],
+    "set": {
+      "DEV": {
+        "NEQUI_PARAMETERS": "nequi-parameters-qa"
+      },
+      "QA": {},
+      "PDN": {}
+    },
+    "deployDev": [],
+    "deploy": [],
+    "publish": [],
+    "both": [
+      "NEQUI_EVENT_BRIDGE_BUS_NAME",
+      "NEQUI_PARAMETERS"
+    ]
+  },
+  "config": {
+    "timeout": 15,
+    "memorySize": 128,
+    "desc": "02-onboardingServerless"
+  }
+}
