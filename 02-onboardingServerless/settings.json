@@ -7,8 +7,12 @@
       "DEV": {
         "NEQUI_PARAMETERS": "nequi-parameters-qa"
       },
-      "QA": {},
-      "PDN": {}
+      "QA": {
+        "NEQUI_PARAMETERS": "nequi-parameters-qa"
+      },
+      "PDN": {
+        "NEQUI_PARAMETERS": "nequi-parameters-qa"
+      }
     },
     "deployDev": [],
     "deploy": [],

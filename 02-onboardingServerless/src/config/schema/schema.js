@@ -57,24 +57,24 @@ module.exports = {
             "any": {
               "type": "object",
               "properties": {
-                "testRQ": {
+                "parameterRQ": {
                   "type": "object",
                   "properties": {
-                    "parameter1": {
+                    "key": {
                       "type": "string"
                     },
-                    "parameter2": {
+                    "region": {
                       "type": "string"
                     }
                   },
                   "required": [
-                    "parameter1",
-                    "parameter2"
+                    "key",
+                    "region"
                   ]
                 }
               },
               "required": [
-                "testRQ"
+                "parameterRQ"
               ]
             }
           },

@@ -14,9 +14,9 @@
         },
         "RequestBody": {
             "any": {
-                "testRQ": {
-                    "parameter1": "1",
-                    "parameter2": "2"
+                "parameterRQ": {
+                    "key": "onboardingTest",
+                    "region": "C001"
                 }
             }
         }
