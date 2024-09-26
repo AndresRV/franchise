@@ -8,20 +8,20 @@ const lambdaUtils = nequiUtils.Lambda8
 
 const ENV_NEQUI_PARAMETERS = "NEQUI_PARAMETERS";
 
-const getParameter = async (event, request) => {
+const getItem = async (event, request) => {
   try {
 
-    const tableName = "nequi-parameters-qa";//env.getEnv(ENV_NEQUI_PARAMETERS);    
+    const tableName = env.getEnv(ENV_NEQUI_PARAMETERS);    
     const response  = await nequiDynamo.getItem(tableName, request);
     
-    const { Item: { parameter } } = response;
+    const parameter = response?.Item?.parameter;
     return parameter;
 
-  } catch (error) { 
+  } catch (error) {
     throw lambdaUtils.buildOutput(true, true,
       getOutput(event, RESPONSE_MESSAGES.TECHNICAL_ERROR.CODE,
         RESPONSE_MESSAGES.TECHNICAL_ERROR.DESCRIPTION),
-      'dynamoService', 'getParameter', error)
+      'dynamoService', 'getItem', error)
   }
 }
 
@@ -30,5 +30,5 @@ const getOutput = (event, code, description, body) => {
 }
 
 module.exports = {
-  getParameter: getParameter
+  getItem: getItem
 }

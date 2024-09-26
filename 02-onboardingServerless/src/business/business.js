@@ -7,10 +7,30 @@ const lambdaUtils = nequiUtils.Lambda8
 const dynamoService = require("../services/dynamoService");
 
 const callService = async (event) => {
+  const { RequestMessage: { RequestBody: { any: { parameterRQ } } } } = event;
+  const parameter = await dynamoService.getItem(event, parameterRQ);
+  
+  if(parameter == null) {
+    throw lambdaUtils.buildOutput(true, true,
+      getOutput(event, RESPONSE_MESSAGES.DATA_NOT_FOUND.CODE,
+        RESPONSE_MESSAGES.DATA_NOT_FOUND.DESCRIPTION),
+      'business', 'callService', { message: 'Data not found'})
+  }
+
+  return parameter;
+  /*  
   try {
 
     const { RequestMessage: { RequestBody: { any: { parameterRQ } } } } = event;
-    const parameter = await dynamoService.getParameter(event, parameterRQ);
+    const parameter = await dynamoService.getItem(event, parameterRQ);
+    
+    if(parameter == null) {
+      throw lambdaUtils.buildOutput(true, true,
+        getOutput(event, RESPONSE_MESSAGES.DATA_NOT_FOUND.CODE,
+          RESPONSE_MESSAGES.DATA_NOT_FOUND.DESCRIPTION),
+        'business', 'callService', { message: 'Data not found'})
+    }
+
     return parameter;
 
   } catch (error) {
@@ -23,6 +43,7 @@ const callService = async (event) => {
         'business', 'callService', error)
     }
   }
+  */  
 }
 
 const getOutput = (event, code, description, body) => {
