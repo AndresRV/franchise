@@ -1,5 +1,24 @@
 @startuml
 header ONBOARDING_SERVERLESS
-footer Página %page% of %lastpage%\nmade with ♥ by Nequi
-title Diagrama de Secuencia
+footer Página %page% of %lastpage%\nMade with ♥ by Nequi
+title Proceso para consultar un parametro en DynamoDB
+
+actor OnboardingServerlessGateway
+boundary OnboardingServerless
+entity nequi_aws_dynamodb
+autonumber
+
+OnboardingServerlessGateway -> OnboardingServerless: EVENT
+    activate OnboardingServerless
+    
+    OnboardingServerless -> nequi_aws_dynamodb: getItem(key, region)
+    activate nequi_aws_dynamodb
+    note right
+        Tabla: nequi-parameters-{STAGE}
+        Consutla item
+        {STAGE}=dev/qa/pdn
+    end note
+    return Item
+
+return Parametro solicitado
 @enduml

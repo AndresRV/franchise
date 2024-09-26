@@ -14,7 +14,7 @@ const callService = async (event) => {
     throw lambdaUtils.buildOutput(true, true,
       getOutput(event, RESPONSE_MESSAGES.DATA_NOT_FOUND.CODE,
         RESPONSE_MESSAGES.DATA_NOT_FOUND.DESCRIPTION),
-      'business', 'callService', { message: 'Data not found'})
+      'business', 'callService', { message: `Data not found for item "${parameterRQ.key}"`})
   }
 
   return parameter;
