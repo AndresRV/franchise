@@ -5,7 +5,9 @@ import co.com.bancolombia.exception.BusinessException;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserCache;
 import co.com.bancolombia.model.user.gateways.UserRepository;
+import co.com.bancolombia.model.user.gateways.UserSerialize;
 import co.com.bancolombia.model.user.gateways.UserWebClient;
+import co.com.bancolombia.model.user.gateways.UserQueueClient;
 import lombok.RequiredArgsConstructor;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -15,8 +17,8 @@ public class UserUseCase {
     private final UserRepository userRepository;
     private final UserWebClient userWebClient;
     private final UserCache userCache;
-
-    //TODO: ORGANIZAR EXCEPCIONES
+    private final UserQueueClient userQueueClient;
+    private final UserSerialize userSerialize;
 
     public Mono<User> saveUser(Long id) {
         //TODO: NO SE PUEDE BUSCAR POR ID, SE DEBE BUSCAR POR CORREO POR EJEMPLO PERO ENTONCES PRIMERO HAY QUE
@@ -42,7 +44,13 @@ public class UserUseCase {
     private Mono<User> saveUserFromWeb(Long id) {
         return userWebClient.getUserById(id)
                 .switchIfEmpty(Mono.error(new Exception("No se puede encontrar el usuario a guardar")))
-                .flatMap(userRepository::saveUser);
+                .flatMap(user ->
+                    userRepository.saveUser(user)
+                            .flatMap(savedUSer ->
+                                userQueueClient.send(userSerialize.serializeUSer(savedUSer))
+                                        .thenReturn(savedUSer)
+                            )
+                );
     }
 
     private Mono<User> getUserByIdFromDb(Long id) {

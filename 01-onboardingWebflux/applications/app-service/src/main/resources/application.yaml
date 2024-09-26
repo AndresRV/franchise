@@ -32,6 +32,10 @@ adapter:
   restconsumer:
     timeout: 5000
     url: "https://reqres.in/api/users"
+  sqs:
+    region: "us-east-1"
+    queueUrl: "http://localhost:4566/000000000000/Onboarding"
+    endpoint: "http://localhost:4566"
 resilience4j:
   circuitbreaker:
     instances:
