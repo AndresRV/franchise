@@ -1,6 +1,7 @@
 apply plugin: 'org.springframework.boot'
 
 dependencies {
+	implementation project(':dynamo-db')
 	implementation project(':serialize-util')
 	implementation project(':sqs-sender')
 	implementation project(':metrics')

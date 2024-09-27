@@ -38,16 +38,16 @@ public class Handler {
         return userUseCase
                 .getUserById(id)
                 .flatMap(user ->
-                    Mono.defer(() -> ServerResponse.ok()
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(user))
+                        Mono.defer(() -> ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(user))
                 )
                 .onErrorResume(BusinessException.class, error ->
-                    Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
-                            .contentType(MediaType.APPLICATION_JSON)
-                            .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
+                        Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
                 );
-        }
+    }
 
     public Mono<ServerResponse> getAllUsers(ServerRequest serverRequest) {
         Flux<User> userFlux = userUseCase.getAllUsers();

@@ -28,3 +28,5 @@ include ':sqs-sender'
 project(':sqs-sender').projectDir = file('./infrastructure/driven-adapters/sqs-sender')
 include ':serialize-util'
 project(':serialize-util').projectDir = file('./infrastructure/helpers/serialize-util')
+include ':dynamo-db'
+project(':dynamo-db').projectDir = file('./infrastructure/driven-adapters/dynamo-db')
