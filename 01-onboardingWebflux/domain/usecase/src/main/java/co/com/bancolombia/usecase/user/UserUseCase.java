@@ -2,6 +2,7 @@ package co.com.bancolombia.usecase.user;
 
 import co.com.bancolombia.enums.TechnicalMessage;
 import co.com.bancolombia.exception.BusinessException;
+import co.com.bancolombia.exception.TechnicalException;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.model.user.gateways.UserCache;
 import co.com.bancolombia.model.user.gateways.UserRepository;
@@ -20,15 +21,17 @@ public class UserUseCase {
     private final UserQueueClient userQueueClient;
     private final UserSerialize userSerialize;
 
+    private static final Long EXPIRATION_CACHE = 60000L;
+
     public Mono<User> saveUser(Long id) {
-        //TODO: NO SE PUEDE BUSCAR POR ID, SE DEBE BUSCAR POR CORREO POR EJEMPLO PERO ENTONCES PRIMERO HAY QUE
-        // BUSCARLO EN INTERNET ANTES DE GUARDARLO - PARA ENVIAR A GUARDAR EL ID DEBE IR NULL SI O SI
         return userRepository.getUserById(id)
                 .switchIfEmpty(saveUserFromWeb(id));
+                //.switchIfEmpty(Mono.defer(() -> saveUserFromWeb(id)));
     }
 
     public Mono<User> getUserById(Long id) {
         return userCache.findById(id.toString())
+                .onErrorResume(error -> getUserByIdFromDb(id))
                 .switchIfEmpty(getUserByIdFromDb(id));
     }
 
@@ -38,24 +41,31 @@ public class UserUseCase {
 
     public Mono<User> getUserByFirstName(String firstName) {
         return userRepository.getUserByFirstName(firstName)
-                .switchIfEmpty(Mono.error(new Exception("El usuario no existe")));
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.INVALID_NAME)));
     }
 
     private Mono<User> saveUserFromWeb(Long id) {
         return userWebClient.getUserById(id)
-                .switchIfEmpty(Mono.error(new Exception("No se puede encontrar el usuario a guardar")))
+                .onErrorResume(error -> {
+                    System.out.println("existe un error");
+                    return Mono.error(new TechnicalException(TechnicalMessage.GENERIC_ERROR));
+
+                })
+                .switchIfEmpty(Mono.error(new BusinessException(TechnicalMessage.INVALID_USER)))
                 .flatMap(user ->
                     userRepository.saveUser(user)
                             .flatMap(savedUSer ->
                                 userQueueClient.send(userSerialize.serializeUSer(savedUSer))
                                         .thenReturn(savedUSer)
                             )
-                );
+                ).doOnSubscribe(subs -> System.out.println("llego al fin"));
     }
 
     private Mono<User> getUserByIdFromDb(Long id) {
         return userRepository.getUserById(id)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BusinessException(TechnicalMessage.INVALID_ID))))
-                .flatMap(user -> userCache.save(user.getId().toString(), user, 60000L).thenReturn(user));
+                .flatMap(user -> userCache.save(user.getId().toString(), user, EXPIRATION_CACHE)
+                        .onErrorReturn(user)
+                        .thenReturn(user));
     }
 }

@@ -21,8 +21,10 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 class UserUseCaseTest {
@@ -58,8 +60,15 @@ class UserUseCaseTest {
 
     @Test
     void shouldGetUserWhenFoundInRepository() {
+        //doReturn(Mono.just(userMock)).when(userRepository).getUserById(1L);
+
+        //when(userRepository.getUserById(1L)).thenReturn(Mono.just(userMock));
+
         given(userRepository.getUserById(1L))
                 .willReturn(Mono.just(userMock));
+
+        /*given(userWebClient.getUserById(1L))
+                .willReturn(Mono.just(userMock));*/
 
         Mono<User> userMono = userUseCase
                 .saveUser(1L);

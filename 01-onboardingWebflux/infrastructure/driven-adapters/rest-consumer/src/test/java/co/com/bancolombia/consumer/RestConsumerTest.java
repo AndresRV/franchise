@@ -26,13 +26,14 @@ public class RestConsumerTest {
     static void setUp() throws IOException {
         mockBackEnd = new MockWebServer();
         mockBackEnd.start();
-        var webClient = WebClient.builder().baseUrl(mockBackEnd.url("/").toString()).build();
-        restConsumer = new RestConsumer(webClient);
+        var webClient = WebClient.builder()
+                .baseUrl(mockBackEnd.url("/").toString())
+                .build();
+        restConsumer = new RestConsumer(webClient, );
     }
 
     @AfterAll
     static void tearDown() throws IOException {
-
         mockBackEnd.shutdown();
     }
 

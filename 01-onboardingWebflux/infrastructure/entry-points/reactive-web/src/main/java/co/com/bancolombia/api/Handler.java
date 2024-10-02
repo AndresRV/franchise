@@ -3,6 +3,7 @@ package co.com.bancolombia.api;
 import co.com.bancolombia.api.response.MessageErrorResponse;
 import co.com.bancolombia.enums.TechnicalMessage;
 import co.com.bancolombia.exception.BusinessException;
+import co.com.bancolombia.exception.TechnicalException;
 import co.com.bancolombia.model.user.User;
 import co.com.bancolombia.usecase.user.UserUseCase;
 import lombok.RequiredArgsConstructor;
@@ -24,10 +25,23 @@ public class Handler {
 
     public Mono<ServerResponse> saveUser(ServerRequest serverRequest) {
         Long id = Long.valueOf(serverRequest.pathVariable(ID));
-        Mono<User> userMono = userUseCase.saveUser(id);
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userMono, User.class);
+        return userUseCase
+                .saveUser(id)
+                .flatMap(user ->
+                        Mono.defer(() -> ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(user))
+                )
+                .onErrorResume(BusinessException.class, error ->
+                        Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
+                )
+                .onErrorResume(TechnicalException.class, error ->
+                        Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
+                );
     }
 
     public Mono<ServerResponse> getUserById(ServerRequest serverRequest) {
@@ -55,10 +69,18 @@ public class Handler {
 
     public Mono<ServerResponse> getUserByFirstName(ServerRequest serverRequest) {
         String name = String.valueOf(serverRequest.pathVariable(NAME));
-        Mono<User> userMono = userUseCase.getUserByFirstName(name);
-        return ServerResponse.ok()
-                .contentType(MediaType.APPLICATION_JSON)
-                .body(userMono, User.class);
+        return userUseCase
+                .getUserByFirstName(name)
+                .flatMap(user ->
+                        Mono.defer(() -> ServerResponse.ok()
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(user))
+                )
+                .onErrorResume(BusinessException.class, error ->
+                        Mono.defer(() -> ServerResponse.status(HttpStatusCode.valueOf(Integer.valueOf(error.getTechnicalMessage().getExternalCode())))
+                                .contentType(MediaType.APPLICATION_JSON)
+                                .bodyValue(buildMessageErrorResponse(error.getTechnicalMessage())))
+                );
     }
 
     private MessageErrorResponse buildMessageErrorResponse(TechnicalMessage technicalMessage) {
